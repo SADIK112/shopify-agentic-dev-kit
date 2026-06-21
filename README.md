@@ -19,9 +19,9 @@ This repository provides that structure through:
 
 | Failure mode | Structural fix |
 |---|---|
-| Hallucinated Shopify API fields | Shopify Agent Skills + `validate` scripts are mandatory (`.shopify/skills/`) |
+| Hallucinated Shopify API fields | Guardrails + `shopify.dev` verification are mandatory (`.shopify/skills/guardrails/`); on Claude Code, skills add live schema search and `validate` |
 | Giant context loads | Local agent context and clear layer maps keep prompts small |
-| Confused task routing | `.shopify/skills/registry.json` maps surfaces to the right skill |
+| Confused task routing | `.shopify/skills/registry.json` maps surfaces to the right skill or guardrail |
 | Stale upstream skills | We keep only the router/guardrails and install skills externally |
 
 ## How the agent loads context (cheap → expensive)
@@ -31,7 +31,7 @@ This repository provides that structure through:
 2. .shopify/skills/registry.json ← Shopify surface routing
 3. .shopify/skills/guardrails/    ← repo-specific Shopify skill guidance
 4. feature-specs/<x>/SPEC.md     ← feature intent and constraints
-5. .ai/commands/<cmd>.md     ← workflow-specific instructions
+5. .ai/commands/<cmd>.md        ← workflow-specific instructions
 ```
 
 The agent should pull in **only the layers a task needs**. That is the whole
@@ -58,6 +58,16 @@ The framework's intelligence layer (`.ai/`, `feature-specs/`, `docs/`, `.shopify
 | **Gemini Code Assist** | `GEMINI.md` | Guardrails + `shopify.dev` |
 
 **What "full skill invocation" means:** Claude Code can run `npx skill install shopify-admin` which gives the agent live Shopify GraphQL schema search and a `validate` command for generated ops. This is the strongest hallucination prevention. On other platforms, the guardrail files in `.shopify/skills/guardrails/` serve the same role without the live schema — they cover GID formats, `userErrors` handling, rate limits, and file placement conventions.
+
+## How to use this
+
+Copy this repository into your Shopify app's root (or use it as the starting
+point for a new project). Your application code lives in `app/` — this repo
+provides the agent scaffolding around it. To add a feature, start with the
+`create-feature` command (`.ai/commands/create-feature.md`), which generates a
+spec and domain scaffold. From there, follow the implementation workflow
+(`.ai/workflows/implement-feature.md`). Every task runs the 6-step loop in
+`.ai/AGENTS.md` — that file is always the agent's first read.
 
 ## First-time setup
 
