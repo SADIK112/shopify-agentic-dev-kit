@@ -1,0 +1,66 @@
+---
+description: Shopify AI OS operating rules — always active for this project
+alwaysApply: true
+---
+
+# Shopify AI OS — Cursor Rules
+
+## Load first
+
+Read `.ai/AGENTS.md` before any task. Every rule there is binding —
+architecture, TypeScript patterns, Shopify constraints, and the 6-step task
+loop (locate → plan → skill-gate → implement → validate → report).
+
+## Context loading — pull in only what the task needs
+
+| Need | Load |
+|---|---|
+| Layer rules, import constraints | `.ai/ARCHITECTURE.md` |
+| Shopify integration model, auth | `.ai/PROJECT.md` |
+| TypeScript patterns (Result, GIDs, Zod) | `.ai/TYPESCRIPT.md` |
+| Term definitions | `.ai/GLOSSARY.md` |
+| Shopify surface routing | `.shopify/skills/registry.json` |
+| Shopify rules for a surface | `.shopify/skills/guardrails/<skill>.md` |
+| Feature intent and constraints | `feature-specs/<feature>/SPEC.md` |
+| Workflow steps | `.ai/commands/<task>.md` |
+
+## Workflow menu
+
+When asked to perform one of these tasks, read the file first:
+
+| Task | File |
+|---|---|
+| New feature | `.ai/commands/create-feature.md` |
+| New repository | `.ai/commands/create-repository.md` |
+| New service | `.ai/commands/create-service.md` |
+| New route | `.ai/commands/add-route.md` |
+| Debug a failure | `.ai/commands/debug.md` |
+| Pre-ship review | `.ai/commands/review.md` |
+| Refactor | `.ai/commands/refactor.md` |
+| Feature progress | `.ai/commands/status.md` |
+| Session checkpoint | `.ai/commands/checkpoint.md` |
+
+Multi-step chains: `.ai/workflows/build-feature-end-to-end.md`,
+`implement-feature.md`, `add-shopify-function.md`, `add-webhook.md`,
+`add-ui-extension.md`, `migrate-schema.md`, `fix-bug.md`, `run-e2e.md`,
+`rollback-feature.md`.
+
+## Shopify surfaces
+
+No `npx skill install` on this platform. For any task touching a Shopify API surface:
+
+1. Map the surface via `.shopify/skills/registry.json`.
+2. Read `.shopify/skills/guardrails/<skill>.md` — this is your primary Shopify context.
+3. Verify any unknown field or mutation against `shopify.dev` before using it.
+4. Flag anything unconfirmed as `UNVERIFIED: <field>` — do not ship it.
+5. Every mutation must handle `userErrors`. Shopify GIDs only — no bare numeric IDs.
+
+Surface → guardrail file map: `.shopify/skills/guardrails/README.md`.
+
+## Validation
+
+Run before declaring any task done:
+
+```bash
+npm run check
+```

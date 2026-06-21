@@ -21,8 +21,8 @@ development.
 | Feature intent, constraints, open questions | `feature-specs/<feature>/` (all 6 files) |
 | Shopify surface → skill mapping | `.shopify/skills/registry.json` |
 | Repo-specific Shopify skill rules | `.shopify/skills/guardrails/<skill>.md` |
-| Workflow steps for a command | `.claude/commands/<cmd>.md` |
-| Shared infrastructure templates | `.claude/templates/shared/` |
+| Workflow steps for a command | `.ai/commands/<cmd>.md` |
+| Shared infrastructure templates | `.ai/templates/shared/` |
 
 Never pre-load the whole repository. Token cost is proportional to context loaded.
 
@@ -51,23 +51,23 @@ Never pre-load the whole repository. Token cost is proportional to context loade
 ### Building
 | Goal | Workflow |
 |---|---|
-| Build a feature end to end | `.claude/workflows/build-feature-end-to-end.md` |
-| Pick up a specced feature and implement it | `.claude/workflows/implement-feature.md` |
-| Add a Shopify Function | `.claude/workflows/add-shopify-function.md` |
-| Add a webhook handler | `.claude/workflows/add-webhook.md` |
-| Add a UI extension | `.claude/workflows/add-ui-extension.md` |
-| Migrate the Prisma schema | `.claude/workflows/migrate-schema.md` |
+| Build a feature end to end | `.ai/workflows/build-feature-end-to-end.md` |
+| Pick up a specced feature and implement it | `.ai/workflows/implement-feature.md` |
+| Add a Shopify Function | `.ai/workflows/add-shopify-function.md` |
+| Add a webhook handler | `.ai/workflows/add-webhook.md` |
+| Add a UI extension | `.ai/workflows/add-ui-extension.md` |
+| Migrate the Prisma schema | `.ai/workflows/migrate-schema.md` |
 
 ### Debugging & testing
 | Goal | Workflow |
 |---|---|
-| Fix a known bug | `.claude/workflows/fix-bug.md` |
-| Write and run e2e tests | `.claude/workflows/run-e2e.md` |
+| Fix a known bug | `.ai/workflows/fix-bug.md` |
+| Write and run e2e tests | `.ai/workflows/run-e2e.md` |
 
 ### Recovery
 | Goal | Workflow |
 |---|---|
-| Roll back or undo a feature | `.claude/workflows/rollback-feature.md` |
+| Roll back or undo a feature | `.ai/workflows/rollback-feature.md` |
 
 ## Validation before done
 
@@ -75,4 +75,4 @@ Never pre-load the whole repository. Token cost is proportional to context loade
 npm run check   # architecture guard + typecheck + lint
 ```
 
-The Stop hook in `.claude/settings.json` runs this automatically.
+The Stop hook in `.claude/settings.json` runs this automatically. (Claude Code runtime config — not platform-specific content.)

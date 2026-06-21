@@ -1,16 +1,4 @@
 {
-  "hooks": {
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node scripts/check-architecture.mjs 2>&1 && echo '---' && echo 'Validation complete. Fix any violations above before declaring done.'"
-          }
-        ]
-      }
-    ]
-  },
   "permissions": {
     "allow": [
       "Bash(node scripts/*)",
@@ -36,6 +24,18 @@
       "Bash(more .env*)",
       "Bash(printenv*)",
       "Bash(env)"
+    ]
+  },
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node scripts/check-architecture.mjs 2>&1 && echo '---' && echo 'Validation complete. Fix any violations above before declaring done.'"
+          }
+        ]
+      }
     ]
   }
 }

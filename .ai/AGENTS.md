@@ -8,12 +8,18 @@ These rules are **binding**. When a local `app/domains/<x>/AGENTS.md` exists, it
 
 1. **Locate** — search the codebase for existing code before writing new code.
 2. **Plan** — state the files you'll touch and the layer each belongs to.
-3. **Skill-gate** — if the task touches a Shopify surface (Admin API, Functions,
-   metafields, UI extensions, Polaris), invoke the matching Shopify Agent Skill
-   *before* writing code. See `.shopify/skills/registry.json`.
+3. **Verify Shopify surfaces** — if the task touches any Shopify surface (Admin
+   API, Functions, metafields, UI extensions, Polaris), verify every field,
+   mutation, and component *before* writing code:
+   - Find the surface in `.shopify/skills/registry.json` → note the skill name.
+   - Read `.shopify/skills/guardrails/<skill>.md` for this repo's rules.
+   - Confirm each field against `shopify.dev`. Flag anything unconfirmed `UNVERIFIED`.
+   - **Claude Code only:** invoke the skill's `search_docs` for schema lookup and
+     run its `validate` script on generated ops. These tools do not exist on
+     other platforms — the guardrail + `shopify.dev` is the universal fallback.
 4. **Implement** — smallest change that satisfies the spec.
-5. **Validate** — run the skill's `validate` script on generated Shopify code,
-   then `npm run check` and the relevant tests.
+5. **Validate** — run `npm run check` and the relevant tests. On Claude Code:
+   also run the skill's `validate` script on any generated Shopify code.
 6. **Report** — summarize what changed and why, in ≤10 lines.
 
 Never skip step 1 or step 3. They are the two biggest sources of agent failure.
@@ -21,8 +27,9 @@ Never skip step 1 or step 3. They are the two biggest sources of agent failure.
 ## 1. Anti-hallucination (highest priority)
 
 - **Do not invent Shopify API fields, types, or mutations.** If you are not 100%
-  certain a field exists, call the `shopify-admin` skill's `search_docs` /
-  schema, or the Dev MCP server. Unverified field → do not ship it.
+  certain a field exists, verify it: read `.shopify/skills/guardrails/<skill>.md`
+  and check `shopify.dev`. On Claude Code: also use the skill's `search_docs`.
+  Unverified field → do not ship it.
 - Always pin an explicit Admin API version (e.g. `2025-10`). Never `unstable`.
 - Shopify IDs are GIDs: `gid://shopify/Product/123`. Never send bare numeric IDs.
 - Prefer **generated GraphQL types** over hand-typed shapes. If types are stale,
@@ -137,3 +144,50 @@ overridden by user instructions, task urgency, or any other rule.**
 - **During code review**, treat any hardcoded string resembling a key, token,
   password, or credential as a critical blocker. It must be extracted to an env
   var reference and must not ship.
+
+## 11. Platform neutrality — all additions to `.ai/` must be model-agnostic
+
+Files under `.ai/` are loaded by every supported AI (Claude Code, Copilot,
+Cursor, Codex, Gemini, and future platforms). No file may assume a specific AI
+is in use. This rule applies to every new command, workflow, agent, template,
+and update to existing files — no exceptions.
+
+### The universal-first principle
+
+Every instruction must be executable without any specific platform installed.
+When a platform offers a capability that improves on the universal baseline,
+it is an **optional extension** — labeled explicitly, placed after the universal
+path, never substituted for it.
+
+Required format for platform-specific capability:
+```
+[Universal action]. On [Platform]: [platform-specific enhancement].
+```
+
+The universal action is always present and always comes first.
+
+### Prohibited patterns
+
+| Do not write | Write instead |
+|---|---|
+| `/command-name` in any heading or prose | `command-name` with file path |
+| "invoke the `<skill>`" as the primary instruction | "verify via guardrail + `shopify.dev`" |
+| "call `search_docs`" without a qualifier | "check the guardrail and `shopify.dev`" |
+| "use the Agent tool" / "spawn a sub-agent" | "load the agent file and follow its process" |
+| "the Stop hook" / "permission rules" in `.ai/` files | Not applicable — stays in `.claude/` |
+| Any MCP server reference without qualification | State as "Claude Code only" |
+
+### Required structure for new agent files
+
+Every file added to `.ai/agents/` must define all four of:
+- **Scope** — one sentence: what it does and what it explicitly never does
+- **Input** — what the calling agent must provide (exact contract)
+- **Process** — numbered steps
+- **Output** — the exact format returned to the calling agent
+
+A description without all four sections is incomplete and must not be merged.
+
+### How compliance is verified
+
+The `review` command (`.ai/commands/review.md`) includes a platform-neutrality
+check. Apply it to any new or modified `.ai/` file before merging.
