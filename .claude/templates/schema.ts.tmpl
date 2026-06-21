@@ -1,0 +1,43 @@
+// {{domain}} {{Aggregate}} schemas — Zod boundary validation.
+// These are the canonical types for this aggregate. Derive all TS types via
+// z.infer<> so runtime validation and TypeScript stay in sync.
+//
+// Import rules: schemas/ may be imported by services, routes, repositories,
+// and tests. Schemas must NOT import from services or repositories.
+
+import { z } from "zod";
+
+// ── Create ────────────────────────────────────────────────────────────────────
+
+export const {{aggregate}}CreateSchema = z.object({
+  // Add fields here. Use z.string(), z.number(), z.enum([...]) etc.
+  // Example:
+  // title: z.string().min(1).max(255),
+  // discountType: z.enum(["PERCENTAGE", "FIXED_AMOUNT"]),
+  // discountValue: z.number().positive(),
+});
+
+export type {{Aggregate}}Create = z.infer<typeof {{aggregate}}CreateSchema>;
+
+// ── Update ────────────────────────────────────────────────────────────────────
+
+export const {{aggregate}}UpdateSchema = {{aggregate}}CreateSchema.partial().extend({
+  id: z.string().min(1),
+});
+
+export type {{Aggregate}}Update = z.infer<typeof {{aggregate}}UpdateSchema>;
+
+// ── Read (domain type returned from repository) ───────────────────────────────
+
+export const {{aggregate}}Schema = {{aggregate}}CreateSchema.extend({
+  id: z.string(),
+  shop: z.string(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+});
+
+export type {{Aggregate}} = z.infer<typeof {{aggregate}}Schema>;
+
+// ── Shopify GID helpers (if this aggregate references Shopify resources) ──────
+// import { gidSchema } from "~/shared/lib/gid";
+// Example: variantId: gidSchema("ProductVariant"),

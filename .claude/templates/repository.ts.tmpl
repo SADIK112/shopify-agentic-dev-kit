@@ -1,0 +1,21 @@
+// {{Aggregate}} repository — the ONLY place @prisma/client is imported for this
+// aggregate. Shop-scope every non-global query. Return domain types.
+
+import { prisma } from "~/shared/lib/prisma.server";
+import type { {{Aggregate}}Create } from "../schemas/{{aggregate}}.schema";
+
+export function create{{Aggregate}}Repository() {
+  return {
+    async findById(shop: string, id: string) {
+      return prisma.{{aggregate}}.findFirst({ where: { id, shop } });
+    },
+    async listByShop(shop: string) {
+      return prisma.{{aggregate}}.findMany({ where: { shop }, orderBy: { createdAt: "desc" } });
+    },
+    async save(shop: string, data: {{Aggregate}}Create) {
+      return prisma.{{aggregate}}.create({ data: { ...data, shop } });
+    },
+  };
+}
+
+export type {{Aggregate}}Repository = ReturnType<typeof create{{Aggregate}}Repository>;

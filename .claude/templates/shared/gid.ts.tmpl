@@ -1,0 +1,75 @@
+// app/shared/lib/gid.ts
+// Brand types and helpers for Shopify Global IDs (GIDs).
+// A GID<"ProductVariant"> is not assignable to GID<"Product"> — mixing them
+// is a compile error, not a runtime surprise.
+
+import { z } from "zod";
+
+declare const __gidBrand: unique symbol;
+
+/** A Shopify GID branded with the resource type it identifies. */
+export type GID<T extends string = string> = string & { readonly [__gidBrand]: T };
+
+const GID_PATTERN = /^gid:\/\/shopify\/[A-Za-z]+\/\d+$/;
+
+/**
+ * Construct a typed GID. Use instead of template literals.
+ *
+ * @example gid("ProductVariant", "123") → GID<"ProductVariant">
+ */
+export function gid<T extends string>(type: T, id: string | number): GID<T> {
+  return `gid://shopify/${type}/${id}` as GID<T>;
+}
+
+/**
+ * Extract the numeric ID portion from a GID.
+ *
+ * @example numericId("gid://shopify/Product/42") → "42"
+ */
+export function numericId(g: GID): string {
+  return g.split("/").at(-1) ?? "";
+}
+
+/**
+ * Extract the resource type from a GID.
+ *
+ * @example resourceType("gid://shopify/ProductVariant/1") → "ProductVariant"
+ */
+export function resourceType(g: GID): string {
+  return g.split("/")[4] ?? "";
+}
+
+/**
+ * Zod schema that validates a raw string is a well-formed GID of the given type,
+ * and brands the output.
+ *
+ * @example
+ * const schema = z.object({ variantId: gidSchema("ProductVariant") });
+ * type T = z.infer<typeof schema>; // { variantId: GID<"ProductVariant"> }
+ */
+export function gidSchema<T extends string>(type: T) {
+  return z
+    .string()
+    .regex(GID_PATTERN, `Expected a Shopify GID (gid://shopify/<Type>/<id>)`)
+    .refine(
+      (v) => v.startsWith(`gid://shopify/${type}/`),
+      `Expected a ${type} GID`,
+    )
+    .transform((v) => v as GID<T>);
+}
+
+// ── Pre-built schemas for common Shopify resource types ───────────────────────
+
+export const productGidSchema        = gidSchema("Product");
+export const productVariantGidSchema = gidSchema("ProductVariant");
+export const orderGidSchema          = gidSchema("Order");
+export const customerGidSchema       = gidSchema("Customer");
+export const discountGidSchema       = gidSchema("DiscountAutomaticApp");
+
+// ── Convenient type aliases ───────────────────────────────────────────────────
+
+export type ProductGID        = GID<"Product">;
+export type ProductVariantGID = GID<"ProductVariant">;
+export type OrderGID          = GID<"Order">;
+export type CustomerGID       = GID<"Customer">;
+export type DiscountGID       = GID<"DiscountAutomaticApp">;

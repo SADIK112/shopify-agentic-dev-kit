@@ -1,0 +1,9 @@
+// {{Domain}} Admin GraphQL ops. Verified against the shopify-admin skill schema.
+// Tagged with #graphql so codegen produces types. No inlining in routes.
+
+export const {{OP_NAME}} = `#graphql
+  query {{OpName}}($id: ID!) {
+    # request ONLY the fields you use (cost-based rate limiting)
+    node(id: $id) { id }
+  }
+` as const;

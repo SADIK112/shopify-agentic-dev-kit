@@ -1,0 +1,61 @@
+// app/shared/types/errors.ts
+// Base domain error discriminated union. Every service result uses one of these
+// (or a domain-specific extension) as its error type.
+//
+// To add domain-specific variants, extend in the domain's schemas/ file:
+//   export type <Domain>Error = DomainError | { kind: "<domain-variant>"; <field>: string };
+//
+// Never add domain-specific variants here — this file must stay dependency-free.
+
+import type { ZodIssue } from "zod";
+
+export type ValidationError = {
+  kind: "validation";
+  issues: ZodIssue[];
+};
+
+export type NotFoundError = {
+  kind: "not-found";
+  resource: string;
+  id: string;
+};
+
+export type ShopifyError = {
+  kind: "shopify";
+  userErrors: Array<{ field: string[] | null; message: string }>;
+};
+
+export type ConflictError = {
+  kind: "conflict";
+  message: string;
+};
+
+export type UnauthorizedError = {
+  kind: "unauthorized";
+  reason: string;
+};
+
+export type DomainError =
+  | ValidationError
+  | NotFoundError
+  | ShopifyError
+  | ConflictError
+  | UnauthorizedError;
+
+// ── Type guards ───────────────────────────────────────────────────────────────
+
+export const isShopifyError     = (e: DomainError): e is ShopifyError     => e.kind === "shopify";
+export const isValidationError  = (e: DomainError): e is ValidationError  => e.kind === "validation";
+export const isNotFoundError    = (e: DomainError): e is NotFoundError    => e.kind === "not-found";
+
+// ── Route helper — map DomainError to HTTP status code ───────────────────────
+
+export function domainErrorStatus(e: DomainError): number {
+  switch (e.kind) {
+    case "validation":    return 422;
+    case "not-found":     return 404;
+    case "shopify":       return 422;
+    case "conflict":      return 409;
+    case "unauthorized":  return 403;
+  }
+}

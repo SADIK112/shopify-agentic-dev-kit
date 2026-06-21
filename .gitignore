@@ -1,0 +1,8 @@
+node_modules/
+build/
+.cache/
+.env
+.shopify/skills/*/   # installed skill payloads are not committed (see README)
+!.shopify/skills/README.md
+!.shopify/skills/registry.json
+.DS_Store

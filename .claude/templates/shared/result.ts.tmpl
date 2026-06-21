@@ -1,0 +1,30 @@
+// app/shared/types/result.ts
+// The Result<T, E> type used by every service in this codebase.
+// Services return Result instead of throwing so callers can type-check both paths.
+
+import type { DomainError } from "./errors";
+
+export type Ok<T>      = { readonly ok: true;  readonly value: T };
+export type Err<E>     = { readonly ok: false; readonly error: E };
+export type Result<T, E = DomainError> = Ok<T> | Err<E>;
+
+/** Construct a success result. */
+export const ok  = <T>(value: T): Ok<T>   => ({ ok: true,  value });
+
+/** Construct a failure result. */
+export const err = <E>(error: E): Err<E>  => ({ ok: false, error });
+
+/** Narrow to Ok — useful in filter/guard positions. */
+export function isOk<T, E>(r: Result<T, E>): r is Ok<T>   { return r.ok; }
+
+/** Narrow to Err — useful in filter/guard positions. */
+export function isErr<T, E>(r: Result<T, E>): r is Err<E>  { return !r.ok; }
+
+/**
+ * Unwrap a Result or throw. Only call this at route/boundary level after
+ * you have already handled the error path.
+ */
+export function unwrap<T, E>(r: Result<T, E>): T {
+  if (!r.ok) throw new Error(`unwrap called on Err: ${JSON.stringify(r.error)}`);
+  return r.value;
+}

@@ -1,0 +1,41 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node scripts/check-architecture.mjs 2>&1 && echo '---' && echo 'Validation complete. Fix any violations above before declaring done.'"
+          }
+        ]
+      }
+    ]
+  },
+  "permissions": {
+    "allow": [
+      "Bash(node scripts/*)",
+      "Bash(npm run check)",
+      "Bash(npm run typecheck)",
+      "Bash(npm run lint)",
+      "Bash(npm run sync-skills)",
+      "Bash(npm run graphql:codegen)",
+      "Bash(node scripts/generate-adr.mjs *)",
+      "Read(**)"
+    ],
+    "deny": [
+      "Bash(rm -rf *)",
+      "Bash(git push --force*)",
+      "Bash(git reset --hard*)",
+      "Read(**/.env)",
+      "Read(**/.env.*)",
+      "Read(**/secrets*)",
+      "Read(**/.secret*)",
+      "Bash(cat .env*)",
+      "Bash(cat */.env*)",
+      "Bash(less .env*)",
+      "Bash(more .env*)",
+      "Bash(printenv*)",
+      "Bash(env)"
+    ]
+  }
+}

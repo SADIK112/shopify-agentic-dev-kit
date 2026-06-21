@@ -1,0 +1,28 @@
+// {{Concern}} service — application/business logic for the {{domain}} domain.
+// Rules: no @prisma/client, no @remix-run/* here. Dependencies are injected so
+// this file is unit-testable with fakes. Validate inputs with the domain schema.
+
+import type { {{Aggregate}}Repository } from "../repositories/{{aggregate}}.repository";
+import { {{aggregate}}CreateSchema, type {{Aggregate}}Create } from "../schemas/{{aggregate}}.schema";
+import { ok, err, type Result } from "~/shared/types/result";
+
+export interface {{Concern}}Deps {
+  repo: {{Aggregate}}Repository;
+  // graphql?: AdminGraphqlClient;  // inject when the use-case calls Shopify
+}
+
+export function create{{Concern}}Service({ repo }: {{Concern}}Deps) {
+  return {
+    async create(shop: string, raw: unknown): Promise<Result<{{Aggregate}}Create>> {
+      const parsed = {{aggregate}}CreateSchema.safeParse(raw);
+      if (!parsed.success) return err({ kind: "validation", issues: parsed.error.issues });
+
+      // ...business invariants here...
+
+      const saved = await repo.save(shop, parsed.data);
+      return ok(saved);
+    },
+  };
+}
+
+export type {{Concern}}Service = ReturnType<typeof create{{Concern}}Service>;

@@ -1,0 +1,71 @@
+{
+  "$schema": "./registry.schema.json",
+  "toolkit": "Shopify/shopify-ai-toolkit",
+  "install": "npx skills add Shopify/shopify-ai-toolkit",
+  "apiVersion": "2025-10",
+  "surfaces": [
+    {
+      "surface": "admin-graphql",
+      "skill": "shopify-admin",
+      "use": "Any Admin API read/write (products, orders, customers, inventory, discounts)",
+      "validate": "validate",
+      "guardrail": "guardrails/shopify-admin.md"
+    },
+    {
+      "surface": "functions",
+      "skill": "shopify-functions",
+      "use": "Cart/checkout/delivery/discount/fulfillment/payment Functions in extensions/",
+      "validate": "validate",
+      "guardrail": "guardrails/shopify-functions.md"
+    },
+    {
+      "surface": "custom-data",
+      "skill": "shopify-custom-data",
+      "use": "Metafields & metaobjects (definitions, reads, writes)",
+      "validate": "validate",
+      "guardrail": "guardrails/shopify-custom-data.md"
+    },
+    {
+      "surface": "checkout-ui",
+      "skill": "shopify-polaris-checkout-extensions",
+      "use": "Checkout UI extensions",
+      "validate": "validate",
+      "guardrail": "guardrails/shopify-checkout-ui.md"
+    },
+    {
+      "surface": "customer-account-ui",
+      "skill": "shopify-polaris-customer-account-extensions",
+      "use": "Customer account UI extensions",
+      "validate": "validate",
+      "guardrail": "guardrails/shopify-customer-account-ui.md"
+    },
+    {
+      "surface": "app-home",
+      "skill": "shopify-polaris-app-home",
+      "use": "Embedded admin app home, App Bridge, Polaris admin UI",
+      "validate": "validate",
+      "guardrail": "guardrails/shopify-app-home.md"
+    },
+    {
+      "surface": "admin-extensions",
+      "skill": "shopify-polaris-admin-extensions",
+      "use": "Admin UI extensions (action extensions, block extensions, editor extensions)",
+      "validate": "validate",
+      "guardrail": "guardrails/shopify-admin-extensions.md"
+    },
+    {
+      "surface": "storefront",
+      "skill": "shopify-storefront-graphql",
+      "use": "Headless storefront GraphQL (only if this app goes headless)",
+      "validate": "validate",
+      "guardrail": "guardrails/shopify-storefront.md"
+    },
+    {
+      "surface": "docs",
+      "skill": "shopify-dev",
+      "use": "General shopify.dev documentation search when no specific skill fits",
+      "validate": null,
+      "guardrail": null
+    }
+  ]
+}

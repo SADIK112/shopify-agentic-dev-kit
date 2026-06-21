@@ -1,0 +1,53 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Shopify skill registry",
+  "type": "object",
+  "required": [
+    "surfaces"
+  ],
+  "properties": {
+    "toolkit": {
+      "type": "string"
+    },
+    "install": {
+      "type": "string"
+    },
+    "apiVersion": {
+      "type": "string"
+    },
+    "surfaces": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "surface",
+          "skill",
+          "use"
+        ],
+        "properties": {
+          "surface": {
+            "type": "string"
+          },
+          "skill": {
+            "type": "string"
+          },
+          "use": {
+            "type": "string"
+          },
+          "validate": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "guardrail": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    }
+  }
+}

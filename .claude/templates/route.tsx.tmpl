@@ -1,0 +1,19 @@
+// Thin Remix route — parse input, call a service, shape output. No business
+// logic, no Prisma, no GraphQL strings here.
+
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
+import { authenticate } from "~/shared/lib/shopify.server";
+
+export async function loader({ request }: LoaderFunctionArgs) {
+  const { session } = await authenticate.admin(request);
+  // const data = await someService.read(session.shop);
+  return { shop: session.shop };
+}
+
+export async function action({ request }: ActionFunctionArgs) {
+  const { session } = await authenticate.admin(request);
+  const form = await request.formData();
+  // const result = await someService.create(session.shop, Object.fromEntries(form));
+  // map result -> response (handle userErrors / domain errors)
+  return { ok: true };
+}
