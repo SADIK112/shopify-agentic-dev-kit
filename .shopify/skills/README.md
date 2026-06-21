@@ -56,3 +56,22 @@ node scripts/sync-skills.mjs   # verify install + refresh registry status
 | Polaris admin components | `shopify-polaris-app-home` (+ admin ext) | polaris |
 | Storefront (headless) | `shopify-storefront-graphql` | — |
 | General doc search | `shopify-dev` | — |
+
+## Using this repo on non-Claude platforms
+
+Platforms that do not support `npx skill install` (GitHub Copilot, Cursor,
+OpenAI Codex, Gemini Code Assist, etc.) cannot invoke Shopify Agent Skills
+directly. Use the guardrail files as the fallback:
+
+1. `registry.json` → find the skill name for your surface.
+2. `guardrails/<skill>.md` → read the project-specific rules for that surface.
+3. `guardrails/README.md` → full surface → guardrail file map with official
+   docs URLs for field/mutation verification.
+
+The guardrails capture the most critical rules (GID format, `userErrors`
+handling, rate limits, file placement) and prevent the most common Shopify
+hallucinations. They are not a full substitute for the skill's schema search
+and `validate` command, but they are the correct fallback without it.
+
+When a field or mutation cannot be confirmed from the guardrail alone, check
+`shopify.dev` before writing code. Flag anything unconfirmed as `UNVERIFIED`.
